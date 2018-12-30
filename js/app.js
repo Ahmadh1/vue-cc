@@ -7,8 +7,9 @@ new Vue({
       currencies: {},
       from: 'USD',
       to: 'PKR',
-      amount: null,
-      result: 0
+      amount: 0,
+      result: 0,
+      loading: false
     }, 
     computed: {
       formattedCurrencies() {
@@ -16,6 +17,9 @@ new Vue({
       },
       calculatedResult(){
           return (Number(this.amount) * this.result).toFixed(3);
+      },
+      disabled() {
+        return this.amount === 0 || !this.amount || this.loading;
       }
     },
     methods: {
@@ -36,11 +40,24 @@ new Vue({
       },
       convertCurrency() {
           const key = `${this.from}_${this.to}`;
+          this.loading = true;
         axios.get(`https://free.currencyconverterapi.com/api/v6/convert?q=${key}`)
           .then((response) => {
-            console.log(response)
+            this.loading = false;
             this.result = response.data.results[key].val
           })
       }
+    },
+   
+    watch: {
+
+      from() {
+        return this.result = 0;
+      },
+
+      to() {
+        return this.result = 0;
+      }
+    
     }
   })
